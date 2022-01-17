@@ -1,0 +1,4 @@
+advertools
+python-whois
+argparse
+streamlit
