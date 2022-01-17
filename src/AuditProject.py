@@ -143,6 +143,8 @@ class AuditProject:
                 "siteAliases" : self.siteAliases
             }
         
+    def getProjectDataAsJson(self):
+        return json.dumps(self.getProjectData(), indent=4)
 
     def makeProjectFolder(self):
         os.makedirs(self.projectPath, exist_ok=True)

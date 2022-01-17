@@ -52,8 +52,8 @@ class TechAuditCommandLineParamsConfig:
                 self.auditProject.addDomain(dict["domain"])
 
                 if "aliases" in dict and dict["aliases"] is not None:
-                    if len(dict["aliases"] >0):
-                        self.auditProject.addDomain(dict["domain"])
+                    if len(dict["aliases"]) > 0:
+                        self.auditProject.addDomainAliases(dict["domain"], dict["aliases"])
         
         return self
     

@@ -34,15 +34,27 @@ st.write("created by Alan Richardon [talotics.com](https://talotics.com) | [@tal
 
 st.text_input("Domain to check", key="domain")
 
+st.text_area("Domain Aliasses", key="aliases")
+
+go = st.button("Analyze")
 
 domain = st.session_state.domain
+
+if not go:
+    st.stop()
 
 if len(domain)==0 or len(domain.strip())==0:
     st.write("Please Enter a Domain e.g. google.com (but don't use google.com)")
     st.stop()
 
-auditProject = TechAuditCommandLineParamsConfig().setFromDictArgs({"domain":domain}).getAuditProject()
+aliases = st.session_state.aliases
 
+domainAliases = []
+
+if len(aliases)>0 and len(aliases.strip())>0:
+    domainAliases = aliases.split("\n")
+
+auditProject = TechAuditCommandLineParamsConfig().setFromDictArgs({"domain":domain, "aliases":domainAliases}).getAuditProject()
 
 def progressStepsValue(curr, total):
     return int((curr/total)*100)
@@ -51,9 +63,6 @@ progressbar = st.progress(progressStepsValue(0,6))
 
 # todo pass in filename from command line
 # only if file exists
-
-
-
 
 
 
@@ -127,15 +136,24 @@ st.write("\n")
 st.write("## Ping Urls\n")
 
 
-def printRedirectChain(pingResult, indent):
+def printRedirectChain(pingResult):
     indentPrefix = ""
-    if(indent > 0 ):
-        indentPrefix = indent * "   "
+    indentAmount=0
+    markdown = ""
 
     if pingResult.hasRedirects():
         for redirect in pingResult.getRedirectChain().values():
-            st.write(indentPrefix + "* redirects to " + redirect.getUrl() + " - (" + str(redirect.getStatusCode()) + ")")
-            printRedirectChain(redirect, indent+1)
+            indentPrefix = indentAmount * "   "
+            redirectInfo = ""
+            if len(redirect.getRedirectsTo())>0:
+                redirectInfo = " redirects to " + redirect.getRedirectsTo()
+            else:
+                redirectInfo = " terminates with "
+            
+            line = indentPrefix + str(indentAmount+1) + ". " + redirect.getUrl() + redirectInfo + " (" + str(redirect.getStatusCode()) + ")"
+            markdown = markdown + line + "\n"                 
+            indentAmount = indentAmount+1
+        st.markdown(markdown)
             
 
 # dict of DomainHTTPsRedirectChecker objects
@@ -151,7 +169,7 @@ for result in pingResults.values():
         st.write("\n* GET " + pingResult.getUrl() + " status code " + str(pingResult.getStatusCode()))
         # output redirect info
         if pingResult.hasRedirects():
-            printRedirectChain(pingResult,1)
+            printRedirectChain(pingResult)
         # output errors
         errorsToReport = pingResult.getErrorMessages()
         if(len(errorsToReport)>0):

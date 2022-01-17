@@ -29,8 +29,12 @@ class PingResult:
 
     def setRedirectsTo(self, redirectLocation):
         self.redirectsTo = redirectLocation
+
+    def getRedirectsTo(self):
+        return self.redirectsTo
     
-    def followRedirectChain(self, location):
+    def followRedirectChain(self, startLocation):
+        location = startLocation
         self.redirectsTo = location
 
         initialRedirect = PingResult(self.url, self.status)
@@ -60,6 +64,7 @@ class PingResult:
                             redirectFinished=True
                             self.addErrorMessage("Max Redirect Count Reached " + str(self.maxRedirects))
                 else:
+                    location="-"
                     redirectFinished=True                
             except BaseException as err:
                 pingStatus = PingResult(location, 502)

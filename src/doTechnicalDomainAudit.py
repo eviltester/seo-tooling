@@ -106,14 +106,19 @@ print("## Ping Urls\n")
 
 def printRedirectChain(pingResult, indent):
     indentPrefix = ""
-    if(indent > 0 ):
-        indentPrefix = indent * "   "
+    indentAmount=0
 
     if pingResult.hasRedirects():
         for redirect in pingResult.getRedirectChain().values():
-            print(indentPrefix + "* redirects to " + redirect.getUrl() + " - (" + str(redirect.getStatusCode()) + ")")
-            printRedirectChain(redirect, indent+1)
-            
+            indentPrefix = indentAmount * "   "
+            redirectInfo = ""
+            if len(redirect.getRedirectsTo())>0:
+                redirectInfo = " redirects to " + redirect.getRedirectsTo()
+            else:
+                redirectInfo = " terminates with "
+            print(indentPrefix + "* " + redirect.getUrl() + redirectInfo + " (" + str(redirect.getStatusCode()) + ")")
+            indentAmount = indentAmount+1
+                        
 
 # dict of DomainHTTPsRedirectChecker objects
 pingResults = technicalAuditor.getAuditPingResults() 
@@ -128,7 +133,7 @@ for result in pingResults.values():
         print("\n* GET " + pingResult.getUrl() + " status code " + str(pingResult.getStatusCode()))
         # output redirect info
         if pingResult.hasRedirects():
-            printRedirectChain(pingResult,1)
+            printRedirectChain(pingResult)
         # output errors
         errorsToReport = pingResult.getErrorMessages()
         if(len(errorsToReport)>0):
