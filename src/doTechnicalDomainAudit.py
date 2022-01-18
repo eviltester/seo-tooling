@@ -104,7 +104,7 @@ print("\n")
 print("## Ping Urls\n")
 
 
-def printRedirectChain(pingResult, indent):
+def printRedirectChain(pingResult):
     indentPrefix = ""
     indentAmount=0
 

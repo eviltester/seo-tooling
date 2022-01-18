@@ -54,7 +54,6 @@ class DomainHTTPsRedirectChecker:
                         print("   * WARNING " + message)
 
                 print("")
-                print(repr(self))
 
     def getPingStatusChecks(self):
         return self.checks
