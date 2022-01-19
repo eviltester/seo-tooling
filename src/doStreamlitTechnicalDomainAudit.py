@@ -142,7 +142,7 @@ def printRedirectChain(pingResult):
     markdown = ""
 
     if pingResult.hasRedirects():
-        for redirect in pingResult.getRedirectChain().values():
+        for redirect in pingResult.getRedirectChain():
             indentPrefix = indentAmount * "   "
             redirectInfo = ""
             if len(redirect.getRedirectsTo())>0:

@@ -30,6 +30,7 @@ with open ("default-project.json", "w") as outputFile:
 # todo: pass in a url from command line can do basic audit from this
 # todo: pass in a url and aliases list from command line
 
+#auditProject = TechAuditCommandLineParamsConfig().setFromDictArgs({"domain": "aDebugDomain"}).getAuditProject()
 auditProject = TechAuditCommandLineParamsConfig().getAuditProject()
 
 
@@ -109,7 +110,7 @@ def printRedirectChain(pingResult):
     indentAmount=0
 
     if pingResult.hasRedirects():
-        for redirect in pingResult.getRedirectChain().values():
+        for redirect in pingResult.getRedirectChain():
             indentPrefix = indentAmount * "   "
             redirectInfo = ""
             if len(redirect.getRedirectsTo())>0:
