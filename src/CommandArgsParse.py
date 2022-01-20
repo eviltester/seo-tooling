@@ -49,7 +49,14 @@ class TechAuditCommandLineParamsConfig:
                 self.auditProject.setName("default-project")
 
             if "domain" in dict and dict["domain"] is not None:
-                self.auditProject.addDomain(dict["domain"])
+                aDomain=dict["domain"]
+
+                replaceThis = ["https://", "http://"]
+                for replacement in replaceThis:
+                    if aDomain.startswith(replacement):
+                        aDomain = aDomain.replace(replacement, "")
+
+                self.auditProject.addDomain(aDomain)
 
                 if "aliases" in dict and dict["aliases"] is not None:
                     if len(dict["aliases"]) > 0:

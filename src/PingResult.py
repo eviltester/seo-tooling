@@ -1,5 +1,6 @@
 import requests
 
+
 class PingResult:
     def __init__(self, url, status):
         self.url = url
@@ -32,6 +33,12 @@ class PingResult:
 
     def getRedirectsTo(self):
         return self.redirectsTo
+
+    def getFinalRedirectLocation(self):
+        if len(self.redirectChain) == 0:
+            return ""
+
+        return self.redirectChain[len(self.redirectChain)-1].getUrl()
     
     def followRedirectChain(self, startLocation):
         location = startLocation

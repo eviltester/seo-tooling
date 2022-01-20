@@ -30,9 +30,9 @@ from CommandArgsParse import TechAuditCommandLineParamsConfig
 
 st.header("Technical Domain Auditor")
 
-st.write("created by Alan Richardon [talotics.com](https://talotics.com) | [@talotics](https://twitter.com/talotics)")
+st.write("created by Alan Richardson [talotics.com](https://talotics.com) | [@talotics](https://twitter.com/talotics)")
 
-st.text_input("Domain to check", key="domain")
+st.text_input("Domain to check e.g. a-domain-i-own.com", key="domain")
 
 st.text_area("Domain Aliasses", key="aliases")
 
@@ -166,7 +166,12 @@ for result in pingResults.values():
 
     for pingResult in statusChecks:
         # output ping
-        st.write("\n* GET " + pingResult.getUrl() + " status code " + str(pingResult.getStatusCode()))
+
+        redirectSummary = ""
+        if pingResult.hasRedirects():
+            redirectSummary = " - final redirect to " + pingResult.getFinalRedirectLocation()
+
+        st.write("\n* GET " + pingResult.getUrl() + " status code " + str(pingResult.getStatusCode()) + redirectSummary)
         # output redirect info
         if pingResult.hasRedirects():
             printRedirectChain(pingResult)

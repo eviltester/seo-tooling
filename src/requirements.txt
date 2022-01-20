@@ -2,3 +2,5 @@ advertools
 python-whois
 argparse
 streamlit
+streamlit-aggrid
+beautifulsoup4
