@@ -32,6 +32,21 @@ st.header("Technical Domain Auditor")
 
 st.write("created by Alan Richardson [talotics.com](https://talotics.com) | [@talotics](https://twitter.com/talotics)")
 
+with st.expander("Instructions"):
+    st.markdown('''
+        Enter a domain to analyze.
+        
+        - the domain is not the full URL so do not include the `https://` or `http://` parts.
+
+        If the domain has aliases, then enter those in the text area box.
+
+        The analysis will check the:
+
+        - https certificate date
+        - when the domain expires
+        - any redirects for various top level URL conditions
+        ''')
+
 st.text_input("Domain to check e.g. a-domain-i-own.com", key="domain")
 
 st.text_area("Domain Aliasses", key="aliases")
