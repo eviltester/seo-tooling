@@ -57,7 +57,7 @@ class PingResult:
                 response = requests.head(location)
                 pingStatus = PingResult(location, response.status_code)
                 print("   * " + location + " - " + str(response.status_code))
-                if response.status_code in [301,302, 307, 308]:
+                if response.status_code in [301,302, 303, 307, 308]:
                     # it is a redirect response
                         if("location" in response.headers):
                             redirectTo = response.headers['location']
@@ -83,7 +83,7 @@ class PingResult:
         #add pings to all redirectChain arrays in the chain to allow recursive processing of pingResult redirect chains
         for aPingResult in self.redirectChain:
             foundIt = False
-            if aPingResult.getStatusCode() in [301,302, 307, 308]:
+            if aPingResult.getStatusCode() in [301,302, 303, 307, 308]:
                 for eachPingResult in self.redirectChain:
                     if foundIt==True:
                         aPingResult.redirectChain.append(eachPingResult)                        

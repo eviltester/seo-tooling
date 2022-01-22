@@ -41,7 +41,7 @@ class DomainHTTPsRedirectChecker:
                 self.checks.append(pingStatus)
                 print("* " + url + " - " + str(response.status_code))
 
-                if response.status_code in [301,302, 307, 308]:
+                if response.status_code in [301,302, 303, 307, 308]:
                     if("location" in response.headers):
                         redirectTo = response.headers['location']
                         pingStatus.followRedirectChain(redirectTo)
