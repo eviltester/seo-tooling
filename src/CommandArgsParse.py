@@ -51,18 +51,30 @@ class TechAuditCommandLineParamsConfig:
             if "domain" in dict and dict["domain"] is not None:
                 aDomain=dict["domain"]
 
-                replaceThis = ["https://", "http://"]
-                for replacement in replaceThis:
-                    if aDomain.startswith(replacement):
-                        aDomain = aDomain.replace(replacement, "")
+                aDomain = self.removeScheme(aDomain)
 
                 self.auditProject.addDomain(aDomain)
 
                 if "aliases" in dict and dict["aliases"] is not None:
                     if len(dict["aliases"]) > 0:
-                        self.auditProject.addDomainAliases(dict["domain"], dict["aliases"])
+
+                        # remove any https or http schemes
+                        aliases = []
+                        for aUrl in dict["aliases"]:
+                            aliases.append(self.removeScheme(aUrl))
+
+                        self.auditProject.addDomainAliases(aDomain, aliases)
         
         return self
+
+    def removeScheme(self, aUrl):
+        aDomain = aUrl
+        replaceThis = ["https://", "http://"]
+        for replacement in replaceThis:
+            if aDomain.startswith(replacement):
+                aDomain = aDomain.replace(replacement, "")
+        return aDomain
+        
     
     def getAuditProject(self):
         return self.auditProject
