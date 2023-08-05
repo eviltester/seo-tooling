@@ -6,7 +6,7 @@ from st_aggrid import AgGrid, JsCode
 from st_aggrid.grid_options_builder import GridOptionsBuilder
 
 
-st.header("Plausible Log Viewer")
+st.header("Plausible Log Viewer Check for 404s")
 
 st.sidebar.markdown('''Created by Alan Richardson
 
@@ -18,10 +18,14 @@ with st.sidebar.expander("Instructions"):
         Enter a domain being tracked in plausible.io, and the API key for your plausible site.
 
         API keys can be created and revoked from the [plausible.io settings GUI](https://plausible.io/settings#api-keys)
+                
+        This tool will then check all the urls and report on the 404s.
         ''')
+    
+defaultAPICode = ""
 
 st.text_input("Domain for stats", key="url")
-st.sidebar.text_input("Plausible API key", type="password", key="apikey")
+st.sidebar.text_input("Plausible API key", type="password", key="apikey", value=defaultAPICode)
 limitnumber = st.sidebar.number_input("Number of Rows", min_value=1, value=1000,)
 grid_height = st.sidebar.number_input("Grid height", min_value=200, max_value=4000, value=400)
 periodRange = st.sidebar.selectbox('Time Period',('12 Months', '6 Months', 'This month', '30 Days', '7 Days', 'Today'))
@@ -73,34 +77,53 @@ jsondata = json.loads(page.text)
 #st.write(jsondata)
 
 
-fields = []]
+fields = []
 
 # Generic get the keys
 item =jsondata['results'][0]
 for key, value in item.items():
     fields.append(key)
 
+st.write(fields)
+
 # Get list of items
 items= jsondata['results']
 
+
+
+# for each url, check for 404s
+
+the404items = []
+for item in items:
+    checkUrl = "https://" + url + item["page"]
+    response = requests.get(checkUrl)
+    if(response.status_code == 404):
+        st.write([response.status_code, checkUrl])
+        the404items.append(item)
+    else:
+        st.write(checkUrl)
+
+
+
+
+
 # Prepare Data Grid
 gridData = pd.DataFrame(columns=fields)
-for item in items:
+for item in the404items:
     dataRow = dict()
     for field in fields:
         value = ""
         dataRow[field]=item[field]
     gridData = gridData.append(dataRow, ignore_index=True)
 
+
+
+
+
+
 # Prepare AG Grid
 gb = GridOptionsBuilder.from_dataframe(gridData)
 gb.configure_pagination(paginationAutoPageSize=False,paginationPageSize=50)
-
-# create a cell renderer for each page and the domain to link to plausible stats
-
-linkUrl = "https://plausible.io/" + url + "?page="
-theFunction = JsCode("function(params){return '<a target=\"_blank\" href=\"' + '" + linkUrl + "' + params.value + '\"\>' + params.value + '</a>'}")
-gb.configure_column('page', cellRenderer=theFunction)
 
 # make copy and paste easier
 gb.configure_default_column(editable=True)
